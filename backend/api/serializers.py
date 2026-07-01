@@ -8,10 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # Usamos 'nome' para bater exatamente com a tabela do banco de dados
-        fields = ['nome', 'email', 'password'] 
+        fields = ['nome', 'email', 'password', 'bio', 'cargo'] 
         
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'bio': {'required': False},
+            'cargo': {'required': False}
         }
 
     def create(self, validated_data):
