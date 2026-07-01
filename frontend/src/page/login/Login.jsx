@@ -133,7 +133,8 @@ export default function Login() {
                 {/* Footer do Card */}
                 <p className="text-center text-sm text-gray-400 mt-6">
                     Don't have an account?{' '}
-                    <a href="#" className="text-[#7c3aed] hover:text-[#9061f9] transition-colors font-medium">
+                    <a href="#" className="text-[#7c3aed] hover:text-[#9061f9] transition-colors font-medium"
+                    onClick={() => navigate("/register")}>
                         Cadastrar
                     </a>
                 </p>

@@ -9,6 +9,7 @@ from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from django.db.models import Q
 from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer
 from .models import Project
 from .models import Tag
@@ -73,3 +74,33 @@ class TagListView(generics.ListAPIView):
     queryset = Tag.objects.all().order_by('nome')
     serializer_class = TagSerializer
     permission_classes = [AllowAny]  # qualquer pessoa pode ver as tags
+
+#endpoint para trazer todos os projetos do usuario
+class GetProjects(generics.ListAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Começa com os projetos do usuário autenticado
+        queryset = Project.objects.filter(dono=self.request.user)
+
+        # Obtém os parâmetros da URL
+        search = self.request.query_params.get("search")
+        tag = self.request.query_params.get("tags")
+
+        # Filtra por título ou descrição
+        if search:
+            queryset = queryset.filter(
+                Q(titulo__icontains=search) |
+                Q(descricao__icontains=search)
+            )
+
+        # Filtra por tag
+        if tag:
+            queryset = queryset.filter(tags__id=tag)
+
+        # Evita projetos repetidos quando houver JOIN com tags
+        return queryset.distinct()
+            
+            
+
