@@ -69,4 +69,21 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ['id', 'titulo', 'descricao', 'topicos', 'numero_membros']
 
+    def validate(self, data):
+        titulo = data.get("titulo")
+        topicos = data.get('topicos', [])
+
+        erros = {}
+
+        if not titulo or not str(titulo).strip():
+            erros['titulo'] = 'O titulo não pode estar vazio.'
+        
+        if not topicos or len(topicos) < 1:
+            erros['topicos'] = 'É preciso pelo menos um tópico para o projeto.'
+
+        if erros:
+            raise serializers.ValidationError(erros)
+
+        return data
+
     
