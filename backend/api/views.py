@@ -108,7 +108,7 @@ class DiscoverProjectsPagination(PageNumberPagination):
 
 class DiscoverProjectsView(generics.ListAPIView):
     serializer_class = ProjectSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     pagination_class = DiscoverProjectsPagination
 
     def get_queryset(self):
