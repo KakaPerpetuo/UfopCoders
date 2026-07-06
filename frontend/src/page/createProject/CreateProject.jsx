@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import ProjectTags from './ProjectTags';
 import { CreateProjectController } from '../../controllers/createProject';
 import { FetchTags } from '../../controllers/fetchTags';
+import { useNavigate } from 'react-router-dom';
 
 const createProjectController = new CreateProjectController();
 const fetchTags = new FetchTags();
@@ -15,6 +16,7 @@ export default function CreateProject() {
     const [membersValue, setMembersValue] = useState(null);
     const [allTags, setAllTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function loadTags() {
@@ -48,9 +50,8 @@ export default function CreateProject() {
                 const response = await createProjectController.execute(token, data);
             }
 
-            if(response.status >= 200 && response.status < 300) {
-                alert("Projeto criado com sucesso");
-            }
+            alert("Projeto criado com sucesso");
+            navigate("/dashboard");
         }
         catch(e) {
             console.error("Erro no envio do projeto ao banco: ", e);
