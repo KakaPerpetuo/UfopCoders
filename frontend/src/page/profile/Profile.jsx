@@ -38,8 +38,12 @@ export default function Profile() {
                 {/* Cabeçalho */}
                 <div className="bg-card border border-border rounded-xl p-8 flex flex-col items-center gap-4 text-center">
 
-                    <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                        <Code2 className="w-12 h-12 text-primary" />
+                    <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 overflow-hidden flex items-center justify-center">
+                        {user.foto_perfil ? (
+                            <img src={user.foto_perfil} alt={user.nome} className="w-full h-full object-cover" />
+                        ) : (
+                            <Code2 className="w-12 h-12 text-primary" />
+                        )}
                     </div>
 
                     <div>
