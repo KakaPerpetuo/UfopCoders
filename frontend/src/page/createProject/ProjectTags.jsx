@@ -1,27 +1,36 @@
- 
+import { useEffect, useState } from "react"; 
+
 export default function ProjectTags(props) {
     
-    const selectedTags = [];
+    const [selectedTags, setSelectedTags] = useState([]);
     
     function selectTag(tag) {
-        tag.selected = !(tag.selected);
-        
-        if(selectedTags.includes(tag.title)) {
-            selectedTags.pop(tag.title);
+        let newArray;
+
+        if(selectedTags.includes(tag.nome)) {
+            newArray = selectedTags.filter((newTag) => newTag !== tag.nome);
+            setSelectedTags(newArray);
         }
         else {
-            selectedTags.push(tag.title);
+            newArray = [...selectedTags, tag.nome];
         }
+
+        setSelectedTags(newArray);
+
+        if (props.onTagsChange) {
+            props.onTagsChange(newArray); 
+        }
+
     };
 
     return (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
             { props.tags.map((tag) => (
                 <div 
-                    className="font-bold px-4 py-2 cursor-pointer flex items-center justify-center rounded-lg border border-border"
+                    className={"hover:border-violet-500 hover:-translate-y-1 transition-transform font-bold px-4 py-2 cursor-pointer flex items-center justify-center rounded-lg border border-border" + (selectedTags.includes(tag.nome) ?" bg-violet-500" : "")}
                     onClick={() => selectTag(tag)}
                 >
-                    {tag.title}
+                    {tag.nome}
                 </div>
             ))}
         </div>
