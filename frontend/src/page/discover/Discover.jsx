@@ -4,79 +4,87 @@ import { AuthContext } from '../../contexts/AuthContext'
 import Sidebar from '../../components/Sidebar'
 import { FetchUserMe } from '../../controllers/fetchUserMe' // se precisar buscar dados do usuário logado
 import { FetchUserProjects } from '../../controllers/fetchUserProjects'
+import { FetchTags } from '../../controllers/fetchTags'
+import { GetUserProjects } from '../../controllers/getUserProjects'
 
-const fetchUserProjects = new FetchUserProjects()
+//TODO mudar para real depois
+// const fetchUserProjects = new FetchUserProjects()
+const getUserProjects = new GetUserProjects()
+
 const fetchUserMe = new FetchUserMe()
-
-const MOCK_PROJECTS = [
-    {
-        id: 1,
-        titulo: "Portal do Aluno UFOP",
-        descricao: "Plataforma web para auxiliar estudantes da UFOP a gerenciarem suas matérias, notas e horários de forma integrada e moderna.",
-        dono: { nome: "João Silva", cargo: "Estudante de BCC" },
-        tags: [
-            { id: 1, nome: "React" },
-            { id: 2, nome: "Node.js" },
-            { id: 3, nome: "PostgreSQL" }
-        ],
-        criado_em: "25/06/2026"
-    },
-    {
-        id: 2,
-        titulo: "MatchDevs",
-        descricao: "Aplicativo mobile para conectar programadores da universidade com projetos de extensão que precisam de desenvolvedores.",
-        dono: { nome: "Maria Souza", cargo: "Estudante de Eng. de Software" },
-        tags: [
-            { id: 4, nome: "Flutter" },
-            { id: 5, nome: "Django" },
-            { id: 6, nome: "Supabase" }
-        ],
-        criado_em: "28/06/2026"
-    },
-    {
-        id: 3,
-        titulo: "E-Commerce Solidário",
-        descricao: "Um site para pequenos artesãos de Ouro Preto anunciarem seus produtos de forma gratuita e impulsionarem a economia local.",
-        dono: { nome: "Carlos Oliveira", cargo: "Estudante de Sistemas" },
-        tags: [
-            { id: 7, nome: "Next.js" },
-            { id: 8, nome: "Tailwind" },
-            { id: 9, nome: "MongoDB" }
-        ],
-        criado_em: "27/06/2026"
-    }
-]
+const fetchTags = new FetchTags()
 
 
 export default function Discover() {
     const { token } = useContext(AuthContext)
     const [user, setUser] = useState(null)
-    const [projects, setProjects] = useState(MOCK_PROJECTS)
+    const [projects, setProjects] = useState([])
+    const [availableTags, setAvailableTags] = useState([])
+
+    const [searchTerm, setSearchTerm] = useState('')
+    const [selectedTag, setSelectedTag] = useState(null)
 
     useEffect(() => {
         async function loadData() {
-            const [userRes, projectRes] = await Promise.all([
+            const [userRes, projectRes, tagsRes] = await Promise.all([
                 fetchUserMe.execute(token),
-                fetchUserProjects.execute(token)
+                getUserProjects.execute(),
+                fetchTags.execute(token)
             ])
 
             if (userRes) setUser(userRes.data)
 
             if (projectRes) setProjects(projectRes.data)
+
+            if (tagsRes) setAvailableTags(tagsRes.data)
         }
         if (token) {
             loadData()
         }
     }, [token])
 
+
+    const handleSelectTag = (tagId) => {
+        setSelectedTag(prevSelected => (prevSelected === tagId ? null : tagId))
+    }
+
+    const handleSearch = async (e) => {
+        if (e) e.preventDefault()
+
+        const response = await getUserProjects.execute(searchTerm, selectedTag)
+        if (response) {
+            setProjects(response.data)
+        }
+    }
+
     if (!user) return <p className='text-gray-400 p-6'>Carregando...</p>
     return (
         <div className='dark min-h-screen bg-background flex'>
             {/* Mantém a Sidebar padrão */}
-            <Sidebar user={user} />
+            <Sidebar user={user} projects={projects} />
 
             <main className='flex-1 p-8'>
                 <h1 className='text-foreground text-4xl font-bold mb-4'>Descubra Projetos</h1>
+
+                <form onSubmit={handleSearch} className="flex gap-2 mb-6 w-full max-w-lg">
+                    <input
+                        type="text"
+                        className="w-full flex-1 my-4 bg-card border border-border text-foreground placeholder-muted-foreground text-sm rounded-[var(--radius)] px-4 py-2.5 focus:outline-none focus:border-primary transition-colors"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Buscar..."
+                        value={searchTerm}
+                    />
+
+                    <button
+                        type="submit" // <-- Garante que submete o formulário ao clicar
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-5 rounded-[var(--radius)] transition-colors"
+                    >
+                        Buscar
+                    </button>
+
+                </form>
+
+
 
                 {user && (
                     <ul className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
