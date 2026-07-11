@@ -6,16 +6,20 @@ import { FetchPatchUserMe } from '../../controllers/fetchPatchUserMe'
 import { FetchTags } from '../../controllers/fetchTags'
 import { ArrowLeft } from 'lucide-react';
 import Header from '../../components/Header'
+import { FetchUploadFoto } from '../../controllers/fetchUploadFoto'
+import { useRef } from 'react'
+
 
 
 const fetchUserMe = new FetchUserMe()
 const fetchPatchUserMe = new FetchPatchUserMe()
 const fetchTags = new FetchTags()
+const fetchUploadFoto = new FetchUploadFoto()
 
 export default function Profile() {
     const { token } = useContext(AuthContext)
     const navigate = useNavigate()
-
+    const fileInputRef = useRef(null)
     const [user, setUser] = useState(null)
     const [todasTags, setTodasTags] = useState([])
     const [tagsSelecionadas, setTagsSelecionadas] = useState([])
@@ -23,6 +27,8 @@ export default function Profile() {
     const [bio, setBio] = useState('')
     const [cargo, setCargo] = useState('')
     const [mensagem, setMensagem] = useState('')
+    const [fotoPreview, setFotoPreview] = useState(null)
+    const [fotoArquivo, setFotoArquivo] = useState(null)
 
     useEffect(() => {
         async function load() {
@@ -53,6 +59,9 @@ export default function Profile() {
     }
 
     async function handleSalvar() {
+        if (fotoArquivo) {
+            await fetchUploadFoto.execute(token, fotoArquivo)
+        }
         const data = {
             nome,
             bio,
@@ -62,7 +71,16 @@ export default function Profile() {
         const res = await fetchPatchUserMe.execute(token, data)
         if (res) {
             setMensagem('Perfil atualizado com sucesso!')
-            setTimeout(() => navigate('/dashboard'), 1500)
+            setTimeout(() => navigate('/profile'), 1500)
+        }
+    }
+
+    function handleFotoChange(e) {
+        const arquivo = e.target.files?.[0]
+        console.log('arquivo selecionado:', arquivo)
+        if (arquivo) {
+            setFotoArquivo(arquivo)
+            setFotoPreview(URL.createObjectURL(arquivo))
         }
     }
 
@@ -84,6 +102,40 @@ export default function Profile() {
                 </button>
                 <div className="bg-[#1a1a2e] rounded-xl p-6 border border-gray-800 shadow-xl w-full">
                     <h1 className='text-white text-2xl'>Editar Perfil</h1>
+                    {/* Foto de perfil */}
+                    <div className="flex flex-col items-center gap-3 mb-4">
+                        <div
+                            onClick={() => fileInputRef.current?.click()}
+                            className="relative w-24 h-24 rounded-full border-2 border-gray-700 bg-primary/20 flex items-center justify-center cursor-pointer overflow-hidden hover:border-violet-500 transition-colors group"
+                        >
+                            {fotoPreview || user.foto_perfil ? (
+                                <img
+                                    src={fotoPreview || user.foto_perfil}
+                                    alt="foto de perfil"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-primary text-xl">{'</>'}</span>
+                            )}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span className="text-white text-xs">Alterar</span>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-sm text-violet-400 hover:text-violet-300 transition-colors"
+                        >
+                            {fotoPreview || user.foto_perfil ? 'Alterar foto' : 'Adicionar foto'}
+                        </button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFotoChange}
+                        />
+                    </div>
 
                     {/* Campos simples */}
                     <div className='flex flex-col gap-4'>

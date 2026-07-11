@@ -9,6 +9,7 @@ from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer
 from .models import Project
@@ -102,5 +103,31 @@ class GetProjects(generics.ListAPIView):
         # Evita projetos repetidos quando houver JOIN com tags
         return queryset.distinct()
             
-            
+class DiscoverProjectsPagination(PageNumberPagination):
+    page_size = 10
 
+class DiscoverProjectsView(generics.ListAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = DiscoverProjectsPagination
+
+    def get_queryset(self):
+        # Começa com todos os projetos, exceto os do usuário autenticado
+        queryset = Project.objects.all()
+        # Obtém os parâmetros da URL
+        search = self.request.query_params.get("search")
+        tag = self.request.query_params.get("tags")
+
+        # Filtra por título ou descrição
+        if search:
+            queryset = queryset.filter(
+                Q(titulo__icontains=search) |
+                Q(descricao__icontains=search)
+            )
+
+        # Filtra por tag
+        if tag:
+            queryset = queryset.filter(tags__id=tag)
+
+        # Evita projetos repetidos quando houver JOIN com tags
+        return queryset.distinct().order_by('-numero_membros')  # Ordena por número de membros, do maior para o menor

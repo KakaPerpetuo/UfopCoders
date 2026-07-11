@@ -3,24 +3,31 @@ import { Link } from "react-router-dom";
 import { Code2, Pencil, Users, FolderGit2 } from "lucide-react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { FetchUserMe } from "../../controllers/fetchUserMe";
+import { FetchUserProjects } from "../../controllers/fetchUserProjects";
 
 const fetchUserMe = new FetchUserMe();
+const fetchUserProjects = new FetchUserProjects();
 
 export default function Profile() {
     const { token } = useContext(AuthContext);
 
     const [user, setUser] = useState(null);
+    const [projects, setProjects] = useState([]);
 
     useEffect(() => {
-        async function load() {
-            const res = await fetchUserMe.execute(token);
+        async function loadProfileAndProjects() {
+            const userRes = await fetchUserMe.execute(token);
+            if (userRes) {
+                setUser(userRes.data);
+            }
 
-            if (res) {
-                setUser(res.data);
+            const projectsRes = await fetchUserProjects.execute(token);
+            if (projectsRes && projectsRes.data) {
+                setProjects(projectsRes.data);
             }
         }
 
-        if (token) load();
+        if (token) loadProfileAndProjects();
     }, [token]);
 
     if (!user) {
@@ -38,8 +45,12 @@ export default function Profile() {
                 {/* Cabeçalho */}
                 <div className="bg-card border border-border rounded-xl p-8 flex flex-col items-center gap-4 text-center">
 
-                    <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                        <Code2 className="w-12 h-12 text-primary" />
+                    <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 overflow-hidden flex items-center justify-center">
+                        {user.foto_perfil ? (
+                            <img src={user.foto_perfil} alt={user.nome} className="w-full h-full object-cover" />
+                        ) : (
+                            <Code2 className="w-12 h-12 text-primary" />
+                        )}
                     </div>
 
                     <div>
@@ -90,20 +101,29 @@ export default function Profile() {
                 </div>
 
                 {/* Projetos */}
-                <div className="bg-card border border-border rounded-xl p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                        <FolderGit2 className="w-4 h-4 text-muted-foreground" />
-                        <h2 className="text-base font-semibold text-foreground">
-                            Meus Projetos
-                        </h2>
-                    </div>
-
-                    <div className="text-sm text-muted-foreground">
-                        Nenhum projeto cadastrado ainda.
-                    </div>
+                {projects.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-3">
+                            {projects.map((project) => (
+                                <div 
+                                    key={project.id} 
+                                    className="bg-[#12111a] border border-border rounded-xl p-4 hover:border-primary/40 transition-colors"
+                                >
+                                    <h3 className="font-medium text-foreground text-sm">{project.titulo}</h3>
+                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                        {project.descricao || "Sem descrição disponível."}
+                                    </p>
+                                    <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                                        <span> {project.numero_membros} membros</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-sm text-muted-foreground">
+                            Nenhum projeto cadastrado ainda.
+                        </div>
+                    )}
                 </div>
-
-            </div>
         </div>
     );
 }

@@ -21,6 +21,7 @@ from api.views import MeView
 from api.views import UploadFotoPerfilView, ProjectCreateView
 from api.views import TagListView
 from api.views import GetProjects
+from api.views import DiscoverProjectsView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -44,5 +45,7 @@ urlpatterns = [
 
     path('api/projetos/', ProjectCreateView.as_view(), name='criar-projeto'),
     path('api/tags/', TagListView.as_view(), name='tag-list'),
+
+    path('api/projects/', DiscoverProjectsView.as_view(), name='discover-projects'),
 
 ]
