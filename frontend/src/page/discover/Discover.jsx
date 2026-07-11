@@ -25,24 +25,33 @@ export default function Discover() {
 
     useEffect(() => {
         async function loadData() {
-            const [userRes, userProjectsRes, tagsRes, discoverRes] = await Promise.all([
+            const [userRes, userProjectsRes, tagsRes] = await Promise.all([
                 fetchUserMe.execute(token),
                 fetchUserProjects.execute(token),
-                fetchTags.execute(token),
-                fetchDiscoverProjects.execute(token)
+                fetchTags.execute(token)
             ])
 
             if (userRes) setUser(userRes.data)
             if (userProjectsRes) setUserProjects(userProjectsRes.data)
             if (tagsRes) setAvailableTags(tagsRes.data)
-            if (discoverRes) {
-                setDiscoverProjects(discoverRes.data.results || discoverRes.data)
-            }
         }
         if (token) {
             loadData()
         }
     }, [token])
+
+    useEffect(() => {
+        if (!token) return
+
+        const delayDebounceFn = setTimeout(async () => {
+            const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTag)
+            if (response) {
+                setDiscoverProjects(response.data.results || response.data)
+            }
+        }, 500)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [searchTerm, selectedTag, token])
 
     const handleSelectTag = (tagId) => {
         setSelectedTag(tagId)
