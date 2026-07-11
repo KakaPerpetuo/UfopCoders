@@ -52,7 +52,7 @@ export default function Login() {
 
                 login(response.data.access);
 
-                navigate('/dashboard');
+                navigate('/discover');
 
             } catch (e) {
                 console.log("Erro na autenticação: ", e);
@@ -134,7 +134,7 @@ export default function Login() {
                 <p className="text-center text-sm text-gray-400 mt-6">
                     Don't have an account?{' '}
                     <a href="#" className="text-[#7c3aed] hover:text-[#9061f9] transition-colors font-medium"
-                    onClick={() => navigate("/register")}>
+                        onClick={() => navigate("/register")}>
                         Cadastrar
                     </a>
                 </p>
