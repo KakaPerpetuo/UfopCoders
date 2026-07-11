@@ -7,8 +7,6 @@ import Profile from './page/profile/Profile'
 import EditProfile from './page/profile/EditProfile'
 import Discover from './page/discover/Discover'
 import './App.css'
-import CreateProject from './page/createProject/CreateProject'
-
 export function Home() {
   return <Landing />;
 }
@@ -20,9 +18,9 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/profile/edit" element={<EditProfile />} />
       <Route path="/discover" element={<Discover />} />
-      <Route path="/create-project" element={<CreateProject />} />
     </Routes>
   )
 }
