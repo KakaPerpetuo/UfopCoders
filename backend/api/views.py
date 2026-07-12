@@ -10,10 +10,12 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import PermissionDenied
 from django.db.models import Q
-from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer
+from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer, MembershipSerializer
 from .models import Project
 from .models import Tag
+from .models import Membership
 
 User = get_user_model()
 
@@ -131,3 +133,23 @@ class DiscoverProjectsView(generics.ListAPIView):
 
         # Evita projetos repetidos quando houver JOIN com tags
         return queryset.distinct().order_by('-numero_membros')  # Ordena por número de membros, do maior para o menor
+
+class ListarCandidatosView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MembershipSerializer
+
+    def get_queryset(self):
+        projeto_id = self.kwargs['projeto_id']
+
+        try:
+            projeto = Project.objects.get(id=projeto_id)
+        except Project.DoesNotExist:
+            raise PermissionDenied("Projeto não encontrado.")
+
+        if projeto.dono != self.request.user:
+            raise PermissionDenied("Apenas o dono do projeto pode ver os candidatos.")
+
+        return Membership.objects.filter(
+            projeto_id=projeto_id,
+            status='pendente'
+        )
