@@ -39,6 +39,12 @@ export default function Header() {
                 <div className="flex gap-3">
                     {token ? (
                         <>
+                            <button 
+                                onClick={() => navigate('/painelDono/:projetoId')}
+                                className="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors"
+                            >
+                                Painel
+                            </button>
                             <button
                                 onClick={() => navigate('/profile')}
                                 className="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors"
