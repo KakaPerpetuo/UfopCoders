@@ -77,11 +77,11 @@ export default function Discover() {
                 <Sidebar user={user} projects={userProjects} />
 
                 <main className='flex-1 p-8'>
-                     <div className="flex justify-between items-center my-10 mb-20">
-                        <h1 className='text-foreground text-7xl font-bold'>Discover Projects</h1>
-                        <button onClick={() => navigate('/createProject')} 
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-[var(--radius)] flex items-center gap-2 transition-colors">
-                            <span className="text-xl leading-none">+</span> Create Project
+                    <div className="flex justify-between items-center my-10 mb-20">
+                        <h1 className='text-foreground text-7xl font-bold'>Projetos disponíveis</h1>
+                        <button onClick={() => navigate('/createProject')}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-[var(--radius)] flex items-center gap-2 transition-colors">
+                            <span className="text-xl leading-none">+</span> Criar Projeto
                         </button>
                     </div>
 

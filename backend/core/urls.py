@@ -22,6 +22,8 @@ from api.views import UploadFotoPerfilView, ProjectCreateView
 from api.views import TagListView
 from api.views import GetProjects
 from api.views import DiscoverProjectsView
+from api.views import ListarCandidatosView
+from api.views import AtualizarCandidatoView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -47,5 +49,9 @@ urlpatterns = [
     path('api/tags/', TagListView.as_view(), name='tag-list'),
 
     path('api/projects/', DiscoverProjectsView.as_view(), name='discover-projects'),
+
+    path('api/projects/<int:projeto_id>/candidatos/', ListarCandidatosView.as_view(), name='listar-candidatos'),
+
+    path('api/projects/<int:projeto_id>/candidatos/<int:membership_id>/', AtualizarCandidatoView.as_view(), name='atualizar-candidato'),
 
 ]
