@@ -153,3 +153,30 @@ class ListarCandidatosView(generics.ListAPIView):
             projeto_id=projeto_id,
             status='pendente'
         )
+
+class AtualizarCandidatoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, projeto_id, membership_id):
+        try:
+            projeto = Project.objects.get(id=projeto_id)
+        except Project.DoesNotExist:
+            return Response({"erro": "Projeto não encontrado."}, status=404)
+
+        # Só o dono pode aprovar/rejeitar
+        if projeto.dono != request.user:
+            raise PermissionDenied("Apenas o dono do projeto pode atualizar candidatos.")
+
+        try:
+            membership = Membership.objects.get(id=membership_id, projeto=projeto)
+        except Membership.DoesNotExist:
+            return Response({"erro": "Candidatura não encontrada."}, status=404)
+
+        novo_status = request.data.get('status')
+        if novo_status not in ['aprovado', 'recusado']:
+            return Response({"erro": "Status inválido. Use 'aprovado' ou 'recusado'."}, status=400)
+
+        membership.status = novo_status
+        membership.save()
+
+        return Response(MembershipSerializer(membership).data)
