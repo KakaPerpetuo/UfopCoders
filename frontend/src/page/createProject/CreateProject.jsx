@@ -44,14 +44,15 @@ export default function CreateProject() {
         try {
             
             const token = localStorage.getItem("token");
+            let response;
             
             if(token) {
-                console.log("token acessado", token);
-                const response = await createProjectController.execute(token, data);
+                response = await createProjectController.execute(token, data);
             }
 
-            alert("Projeto criado com sucesso");
-            navigate("/dashboard");
+            if (response){
+                navigate("/dashboard");
+            }
         }
         catch(e) {
             console.error("Erro no envio do projeto ao banco: ", e);

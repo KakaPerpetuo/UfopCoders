@@ -7,6 +7,7 @@ import { FetchUserMe } from '../../controllers/fetchUserMe'
 import { FetchUserProjects } from '../../controllers/fetchUserProjects'
 import { FetchTags } from '../../controllers/fetchTags'
 import { FetchDiscoverProjects } from '../../controllers/fetchDiscoverProjects'
+import { useNavigate } from 'react-router-dom'
 
 const fetchUserMe = new FetchUserMe()
 const fetchUserProjects = new FetchUserProjects()
@@ -22,6 +23,7 @@ export default function Discover() {
 
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedTag, setSelectedTag] = useState(null)
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function loadData() {
@@ -75,7 +77,13 @@ export default function Discover() {
                 <Sidebar user={user} projects={userProjects} />
 
                 <main className='flex-1 p-8'>
-                    <h1 className='text-foreground text-7xl font-bold my-10 mb-20'>Descubra Projetos</h1>
+                     <div className="flex justify-between items-center my-10 mb-20">
+                        <h1 className='text-foreground text-7xl font-bold'>Discover Projects</h1>
+                        <button onClick={() => navigate('/createProject')} 
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-[var(--radius)] flex items-center gap-2 transition-colors">
+                            <span className="text-xl leading-none">+</span> Create Project
+                        </button>
+                    </div>
 
                     <form onSubmit={handleSearch} className="flex gap-2 mb-6 w-full">
                         <input

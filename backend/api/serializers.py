@@ -71,7 +71,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         titulo = data.get("titulo")
-        topicos = data.get('topicos', [])
+        topicos = data.get('tags', [])
 
         erros = {}
 
