@@ -1,8 +1,24 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Project, Tag
+from .models import Project, Tag, Link, Membership
 
 User = get_user_model()
+
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = ['id', 'url', 'nome_do_link']
+
+class ApprovedMemberSerializer(serializers.ModelSerializer):
+    usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+    nome = serializers.CharField(source='usuario.nome', read_only=True)
+    foto_perfil = serializers.URLField(source='usuario.foto_perfil', read_only=True)
+
+    class Meta:
+        model = Membership
+        fields = ['id', 'usuario_id', 'nome', 'foto_perfil', 'candidatado_em']
+    
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -86,4 +102,18 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         return data
 
+class ProjectDetailSerializer(serializers.ModelSerializer):
+    dono_id = serializers.IntegerField(source='dono.id', read_only=True)
+    dono_nome = serializers.CharField(source='dono.nome', read_only=True)
+    topicos = TagSerializer(many=True, read_only=True, source='tags')
+    links = LinkSerializer(many=True, read_only=True)
+    membros_aprovados = ApprovedMemberSerializer(many=True, read_only=True, source='memberships')
+    
+    class Meta:
+        model = Project
+        fields = ['id', 'titulo', 'descricao', 'numero_membros', 'dono_id', 'dono_nome', 'topicos', 'links', 'membros_aprovados']
+
+    def get_membros_aprovados(self, obj):
+        membros = obj.memberships.filter(status=Membership.Status.APROVADO)
+        return ApprovedMemberSerializer(membros, many=True).data
     

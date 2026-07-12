@@ -153,6 +153,8 @@ class Membership(models.Model):
     )
     candidatado_em = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
+
     class Meta:
         db_table = "memberships"
         unique_together = ("usuario", "projeto")  # impede candidatura duplicada
