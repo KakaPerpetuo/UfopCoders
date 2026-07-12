@@ -16,14 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView
-from api.views import MeView
-from api.views import UploadFotoPerfilView, ProjectCreateView
-from api.views import TagListView
-from api.views import GetProjects
-from api.views import DiscoverProjectsView
-from api.views import ListarCandidatosView
-from api.views import AtualizarCandidatoView
+from api.views import (
+    CreateUserView,
+    MeView,
+    UploadFotoPerfilView,
+    ProjectCreateView,
+    TagListView,
+    GetProjects,
+    DiscoverProjectsView,
+    ListarCandidatosView,
+    AtualizarCandidatoView,
+    ProjectDetailView,
+    ProjectJoinView,
+)
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -49,6 +54,10 @@ urlpatterns = [
     path('api/tags/', TagListView.as_view(), name='tag-list'),
 
     path('api/projects/', DiscoverProjectsView.as_view(), name='discover-projects'),
+    path('api/projects/<int:id>/', ProjectDetailView.as_view(), name='project-detail'),
+
+    path('api/projects/<int:id>/join/', ProjectJoinView.as_view(), name='project-join'),
+
 
     path('api/projects/<int:projeto_id>/candidatos/', ListarCandidatosView.as_view(), name='listar-candidatos'),
 

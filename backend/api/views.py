@@ -12,15 +12,21 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
 from django.db.models import Q
-from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer, MembershipSerializer
-from .models import Project
-from .models import Tag
-from .models import Membership
+from django.core.exceptions import ObjectDoesNotExist
+from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer, ProjectDetailSerializer, MembershipSerializer
+from .models import Project, Tag, Membership
+from django.shortcuts import get_object_or_404
+
 
 User = get_user_model()
 
 supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
 
+class ProjectDetailView(generics.RetrieveAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectDetailSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id' # Faz com que a URL busque pelo campo "id"
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -143,7 +149,7 @@ class ListarCandidatosView(generics.ListAPIView):
 
         try:
             projeto = Project.objects.get(id=projeto_id)
-        except Project.DoesNotExist:
+        except ObjectDoesNotExist:
             raise PermissionDenied("Projeto não encontrado.")
 
         if projeto.dono != self.request.user:
@@ -160,7 +166,7 @@ class AtualizarCandidatoView(APIView):
     def patch(self, request, projeto_id, membership_id):
         try:
             projeto = Project.objects.get(id=projeto_id)
-        except Project.DoesNotExist:
+        except ObjectDoesNotExist:
             return Response({"erro": "Projeto não encontrado."}, status=404)
 
         # Só o dono pode aprovar/rejeitar
@@ -169,7 +175,7 @@ class AtualizarCandidatoView(APIView):
 
         try:
             membership = Membership.objects.get(id=membership_id, projeto=projeto)
-        except Membership.DoesNotExist:
+        except ObjectDoesNotExist:
             return Response({"erro": "Candidatura não encontrada."}, status=404)
 
         novo_status = request.data.get('status')
@@ -180,3 +186,18 @@ class AtualizarCandidatoView(APIView):
         membership.save()
 
         return Response(MembershipSerializer(membership).data)
+class ProjectJoinView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        projeto = get_object_or_404(Project, id=id)
+        
+        if projeto.dono == request.user:
+            return Response({'erro': "Você não pode se candidatar ao seu próprio projeto."})
+        
+        if Membership.objects.filter(projeto=projeto, usuario=request.user).exists():
+            return Response({'erro': "Você já é membro deste projeto."})
+        
+        Membership.objects.create(projeto=projeto, usuario=request.user)
+
+        return Response({'mensagem': "Candidatura enviada com sucesso!"})
