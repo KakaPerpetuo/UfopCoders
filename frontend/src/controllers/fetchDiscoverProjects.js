@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export class FetchDiscoverProjects {
-    async execute(token, search, tags) {
-        const params = {};
+    async execute(token, search, tags, page = 1) {
+        const params = { page };
         if (search) {
             params.search = search;
         }

@@ -117,7 +117,7 @@ class GetProjects(generics.ListAPIView):
         return queryset.distinct()
             
 class DiscoverProjectsPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 12
 
 class DiscoverProjectsView(generics.ListAPIView):
     serializer_class = ProjectSerializer
