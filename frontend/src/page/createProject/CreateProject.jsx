@@ -16,6 +16,7 @@ export default function CreateProject() {
     const [membersValue, setMembersValue] = useState(null);
     const [allTags, setAllTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
+    const [isCreated, setIsCreated] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,15 +44,15 @@ export default function CreateProject() {
 
         try {
             
-            const token = localStorage.getItem("token");
-            let response;
+            const response = await createProjectController.execute(data);
             
-            if(token) {
-                response = await createProjectController.execute(token, data);
-            }
 
             if (response){
-                navigate("/dashboard");
+                setIsCreated(true);
+
+                setTimeout(() => {
+                    navigate("/discover");
+                }, 2000);
             }
         }
         catch(e) {
@@ -70,7 +71,8 @@ export default function CreateProject() {
                     <div>
                         
                         <button
-                        className='text-gray-200 mt-3 gap-2 hover:-translate-y-1 transition-transform flex items-center justify-center'    
+                            className='text-gray-200 mt-3 gap-2 hover:-translate-y-1 transition-transform flex items-center justify-center'
+                            onClick={() => navigate('/dashboard')}        
                         >
                             <FaArrowLeft/>
                             Voltar a Projetos
@@ -135,7 +137,13 @@ export default function CreateProject() {
                                 >
                                     Cancelar
                                 </button>
+
                             </div>
+
+                            {isCreated ?
+                                (<h4 className='text-[#29ff22]'>Projeto criado com sucesso.</h4>) :
+                                (<></>)    
+                            }
 
                         </div>
 

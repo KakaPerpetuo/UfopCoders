@@ -1,16 +1,22 @@
-import axios from 'axios';
+import api from './api'; 
 
 export class AtualizarCandidato {
-    async execute(token, projetoId, membershipId, status) {
+    
+    async execute(projetoId, membershipId, status) {
         try {
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/api/projects/${projetoId}/candidatos/${membershipId}/`,
-                { status },
-                { headers: { Authorization: `Bearer ${token}` } }
+            
+            
+            const response = await api.patch(
+                `/api/projects/${projetoId}/candidatos/${membershipId}/`,
+                { status }
             );
+            
             return response;
         } catch (e) {
             console.error("Erro ao atualizar candidato: ", e);
+            
+            
+            throw e; 
         }
     }
 }

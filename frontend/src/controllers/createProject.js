@@ -1,22 +1,17 @@
-import axios from 'axios';
-import { AuthContext } from '../contexts/AuthContext';
-
+import api from './api';
 
 export class CreateProjectController {
 
-    async execute(token, data) {
+    async execute(data) {
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/projetos/`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await api.post(`/api/projetos/`, data);
 
             return response;
         }
         catch(e) {
-            console.error("Erro na validação:", error.response?.data);
+            console.error("Erro na validação:", e);
+            throw e;
         }
     }
 }

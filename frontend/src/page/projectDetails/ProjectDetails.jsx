@@ -33,9 +33,9 @@ export default function ProjectDetails() {
             try {
                 // Carregar usuário e projetos (para a Sidebar) e o Projeto atual
                 const [userRes, userProjectsRes, projectRes] = await Promise.all([
-                    fetchUserMe.execute(token),
-                    fetchUserProjects.execute(token),
-                    fetchProjectController.execute(token, id)
+                    fetchUserMe.execute(),
+                    fetchUserProjects.execute(),
+                    fetchProjectController.execute(id)
                 ])
 
                 if (userRes) setUser(userRes.data)
@@ -54,7 +54,7 @@ export default function ProjectDetails() {
     const handleJoin = async () => {
         setJoinStatus('loading')
         try {
-            const res = await joinProjectController.execute(token, id)
+            const res = await joinProjectController.execute(id)
             setJoinStatus('success')
             setJoinMessage(res.mensagem || 'Candidatura enviada com sucesso!')
         } catch (error) {

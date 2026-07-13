@@ -1,17 +1,14 @@
-import axios from 'axios';
+import api from './api';
 
 // atualiza dados do usuário logado
 export class FetchPatchUserMe {
-    async execute(token, data) {
+    async execute(data) {
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/me/`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            const response = await api.patch(`/api/users/me/`, data, {
             });
             return response;
         } catch (error) {
-            console.error("Erro ao atualizar usuário: ", error)
+            console.error("Erro ao atualizar usuário: ", error);
         }
     }
 }

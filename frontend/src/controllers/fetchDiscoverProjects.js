@@ -1,7 +1,7 @@
-import axios from 'axios';
+import api from './api';
 
 export class FetchDiscoverProjects {
-    async execute(token, search, tags) {
+    async execute(search, tags) {
         const params = {};
         if (search) {
             params.search = search;
@@ -10,10 +10,7 @@ export class FetchDiscoverProjects {
             params.tags = Array.isArray(tags) ? tags.join(',') : tags;
         }
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/projects/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
+            const response = await api.get(`/api/projects/`, {
                 params: params
             });
             return response;
