@@ -1,15 +1,15 @@
-import axios from 'axios';
+import api from './api';
 
 export class FetchCandidatos {
-    async execute(token, projetoId) {
+    async execute(projetoId) {
         try {
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/api/projects/${projetoId}/candidatos/`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const response = await api.get(
+                `/api/projects/${projetoId}/candidatos/`
             );
             return response;
         } catch (e) {
             console.error("Erro ao buscar candidatos: ", e);
+            throw e;
         }
     }
 }

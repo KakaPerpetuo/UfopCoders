@@ -1,14 +1,13 @@
-import axios from "axios";
+import api from "./api";
 
 //     path('api/projects/<int:id>/join/', ProjectJoinView.as_view(), name='project-join'),
 
 
 export class fetchProjectId {
     
-  async execute(token, projetoId){
+  async execute(projetoId){
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/projects/${projetoId}/`,
-             { headers: { Authorization: `Bearer ${token}` } }
+        const response = await api.get(`/api/projects/${projetoId}/`
         )
         return response.data
     } catch (e){

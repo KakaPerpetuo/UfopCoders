@@ -1,13 +1,9 @@
-import axios from 'axios';
+import api from './api';
 
 export class FetchUserMe {
-    async execute(token) {
+    async execute() {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/me/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await api.get(`/api/users/me/`);
 
             return response;
         } catch (e) {

@@ -7,20 +7,35 @@ export const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if(storedToken) {
+        const accessToken = localStorage.getItem("access_token");
+        const refreshToken = localStorage.getItem("refresh_token");
+
+        const storedToken = {
+            access: accessToken,
+            refresh: refreshToken
+        };
+
+        if(accessToken && refreshToken) {
             setToken(storedToken);
         }
         setLoading(false);
     }, []);
 
-    const login = (newToken) => {
-        localStorage.setItem("token", newToken);
+    const login = (data) => {
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+
+        const newToken = {
+            access: data.access,
+            refresh: data.refresh
+        };
+
         setToken(newToken);
     };
 
     const logout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
         setToken(null);
     };
 

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 
 export class FetchUserAuthentication {
     async execute(email, pass) {
@@ -8,7 +8,7 @@ export class FetchUserAuthentication {
         };
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/PostLogin/`, userData);
+            const response = await api.post(`/api/PostLogin/`, userData);
 
             return response;
         } catch(e) {

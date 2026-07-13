@@ -24,21 +24,28 @@ export default function PainelDono() {
 
     useEffect(() => {
         async function loadData() {
-            const [userRes, projectsRes, candidatosRes] = await Promise.all([
-                fetchUserMe.execute(token),
-                fetchUserProjects.execute(token),
-                fetchCandidatos.execute(token, projetoId)
-            ])
-            if (userRes) setUser(userRes.data)
-            if (projectsRes) setProjects(projectsRes.data)
-            if (candidatosRes) setCandidatos(candidatosRes.data)
-            setLoading(false)
+            try {
+                const [userRes, projectsRes, candidatosRes] = await Promise.all([
+                    fetchUserMe.execute(),
+                    fetchUserProjects.execute(),
+                    fetchCandidatos.execute(projetoId) 
+                ]);
+                
+                if (userRes) setUser(userRes.data);
+                if (projectsRes) setProjects(projectsRes.data);
+                if (candidatosRes) setCandidatos(candidatosRes.data);
+                
+            } catch (error) {
+                console.error("Erro ao carregar dados iniciais:", error);
+            } finally {
+                setLoading(false);
+            }
         }
-        if (token) loadData()
-    }, [token, projetoId])
+        if (token) loadData(); 
+    }, [token, projetoId]);
 
     async function handleAtualizarStatus(membershipId, status) {
-        const res = await atualizarCandidato.execute(token, projetoId, membershipId, status)
+        const res = await atualizarCandidato.execute(projetoId, membershipId, status)
         if (res) {
             // Remove o candidato da lista após aprovar/rejeitar
             setCandidatos(prev => prev.filter(c => c.id !== membershipId))
