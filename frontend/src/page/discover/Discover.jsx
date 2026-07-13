@@ -3,6 +3,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import Sidebar from '../../components/Sidebar'
 import Header from '../../components/Header'
 import ProjectCard from '../../components/ProjectCard'
+import TagChips from '../../components/TagChips'
 import { FetchUserMe } from '../../controllers/fetchUserMe'
 import { FetchUserProjects } from '../../controllers/fetchUserProjects'
 import { FetchTags } from '../../controllers/fetchTags'
@@ -22,7 +23,7 @@ export default function Discover() {
     const [availableTags, setAvailableTags] = useState([])
 
     const [searchTerm, setSearchTerm] = useState('')
-    const [selectedTag, setSelectedTag] = useState(null)
+    const [selectedTags, setSelectedTags] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -46,23 +47,27 @@ export default function Discover() {
         if (!token) return
 
         const delayDebounceFn = setTimeout(async () => {
-            const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTag)
+            const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTags)
             if (response) {
                 setDiscoverProjects(response.data.results || response.data)
             }
         }, 500)
 
         return () => clearTimeout(delayDebounceFn)
-    }, [searchTerm, selectedTag, token])
+    }, [searchTerm, selectedTags, token])
 
-    const handleSelectTag = (tagId) => {
-        setSelectedTag(tagId)
+    const handleToggleTag = (tagId) => {
+        setSelectedTags(prev =>
+            prev.includes(tagId)
+                ? prev.filter(id => id !== tagId)
+                : [...prev, tagId]
+        )
     }
 
     const handleSearch = async (e) => {
         if (e) e.preventDefault()
 
-        const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTag)
+        const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTags)
         if (response) {
             setDiscoverProjects(response.data.results || response.data)
         }
@@ -85,7 +90,7 @@ export default function Discover() {
                         </button>
                     </div>
 
-                    <form onSubmit={handleSearch} className="flex gap-2 mb-6 w-full">
+                    <form onSubmit={handleSearch} className="flex gap-2 mb-4 w-full">
                         <input
                             type="text"
                             className="w-full flex-1 bg-card border border-border text-foreground placeholder-muted-foreground text-sm rounded-[var(--radius)] px-4 py-2.5 focus:outline-none focus:border-primary transition-colors"
@@ -94,22 +99,6 @@ export default function Discover() {
                             value={searchTerm}
                         />
 
-                        <select
-                            value={selectedTag || ""}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                handleSelectTag(val ? Number(val) : null);
-                            }}
-                            className="bg-card border border-border text-foreground text-sm rounded-[var(--radius)] px-3 py-2.5 focus:outline-none focus:border-primary transition-colors cursor-pointer w-64"
-                        >
-                            <option value="">Todas as Tags</option>
-                            {availableTags.map((tag) => (
-                                <option key={tag.id} value={tag.id}>
-                                    {tag.nome}
-                                </option>
-                            ))}
-                        </select>
-
                         <button
                             type="submit"
                             className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-5 rounded-[var(--radius)] transition-colors"
@@ -117,6 +106,8 @@ export default function Discover() {
                             Buscar
                         </button>
                     </form>
+
+                    <TagChips tags={availableTags} selectedTags={selectedTags} onToggleTag={handleToggleTag} />
 
                     {user && (
                         <ul className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
