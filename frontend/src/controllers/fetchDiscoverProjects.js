@@ -1,7 +1,7 @@
 import api from './api';
 
 export class FetchDiscoverProjects {
-    async execute(token, search, tags, page = 1) {
+    async execute(search, tags, page = 1) {
         const params = { page };
         if (search) {
             params.search = search;

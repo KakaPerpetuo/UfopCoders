@@ -34,9 +34,9 @@ export default function Discover() {
     useEffect(() => {
         async function loadData() {
             const [userRes, userProjectsRes, tagsRes] = await Promise.all([
-                fetchUserMe.execute(token),
-                fetchUserProjects.execute(token),
-                fetchTags.execute(token)
+                fetchUserMe.execute(),
+                fetchUserProjects.execute(),
+                fetchTags.execute()
             ])
 
             if (userRes) setUser(userRes.data)
