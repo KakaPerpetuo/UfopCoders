@@ -101,7 +101,7 @@ export default function Register() {
                     });
                 }
 
-                setTimeout(() => navigate('/login'), 2000);
+                navigate('/login');
 
             } catch (e) {
                 console.log("Erro no registro: ", e);
