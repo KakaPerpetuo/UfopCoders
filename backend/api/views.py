@@ -11,7 +11,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.exceptions import ObjectDoesNotExist
 from .serializers import UserSerializer, UserMeSerializer, ProjectSerializer, TagSerializer, ProjectDetailSerializer, MembershipSerializer
 from .models import Project, Tag, Membership
@@ -137,8 +137,17 @@ class DiscoverProjectsView(generics.ListAPIView):
         if tag:
             queryset = queryset.filter(tags__id=tag)
 
+        # Obtém os IDs de tags do usuário logado
+        user_tag_ids = self.request.user.tags.values_list('id', flat=True)
+
+        # Ordena projetos por quantidade de tags em comum com as tags do usuário logado.
+        # Projetos sem nenhuma tag em comum aparecem por último.
+        queryset = queryset.annotate(
+            tags_in_comum=Count('tags', filter=Q(tags__id__in=user_tag_ids))
+        )
+
         # Evita projetos repetidos quando houver JOIN com tags
-        return queryset.distinct().order_by('-numero_membros')  # Ordena por número de membros, do maior para o menor
+        return queryset.distinct().order_by('-tags_in_comum', '-numero_membros')
 
 class ListarCandidatosView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
