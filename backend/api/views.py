@@ -95,7 +95,11 @@ class GetProjects(generics.ListAPIView):
 
         # Obtém os parâmetros da URL
         search = self.request.query_params.get("search")
-        tag = self.request.query_params.get("tags")
+        tags_raw = self.request.query_params.getlist("tags")
+        tags_param = []
+        for t in tags_raw:
+            if t.strip():
+                tags_param.extend([x.strip() for x in t.split(",") if x.strip()])
 
         # Filtra por título ou descrição
         if search:
@@ -104,9 +108,10 @@ class GetProjects(generics.ListAPIView):
                 Q(descricao__icontains=search)
             )
 
-        # Filtra por tag
-        if tag:
-            queryset = queryset.filter(tags__id=tag)
+        # Filtra por tag (AND - o projeto precisa ter todas as tags selecionadas)
+        if tags_param:
+            for tag_id in tags_param:
+                queryset = queryset.filter(tags__id=tag_id)
 
         # Evita projetos repetidos quando houver JOIN com tags
         return queryset.distinct()
@@ -124,7 +129,11 @@ class DiscoverProjectsView(generics.ListAPIView):
         queryset = Project.objects.all()
         # Obtém os parâmetros da URL
         search = self.request.query_params.get("search")
-        tag = self.request.query_params.get("tags")
+        tags_raw = self.request.query_params.getlist("tags")
+        tags_param = []
+        for t in tags_raw:
+            if t.strip():
+                tags_param.extend([x.strip() for x in t.split(",") if x.strip()])
 
         # Filtra por título ou descrição
         if search:
@@ -133,9 +142,10 @@ class DiscoverProjectsView(generics.ListAPIView):
                 Q(descricao__icontains=search)
             )
 
-        # Filtra por tag
-        if tag:
-            queryset = queryset.filter(tags__id=tag)
+        # Filtra por tag (AND - o projeto precisa ter todas as tags selecionadas)
+        if tags_param:
+            for tag_id in tags_param:
+                queryset = queryset.filter(tags__id=tag_id)
 
         # Obtém os IDs de tags do usuário logado
         user_tag_ids = self.request.user.tags.values_list('id', flat=True)

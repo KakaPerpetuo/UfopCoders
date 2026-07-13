@@ -2,21 +2,21 @@ import axios from 'axios';
 
 export class GetUserProjects {
     async execute(search, tags) {
-        
+
         const token = localStorage.getItem("token");
-        if(!token) {
+        if (!token) {
             console.error("Usuario nao autenticado para get projects.");
             return null;
         }
         const params = {};
-        if(search) {
+        if (search) {
             params.search = search;
         }
-        if(tags) {
-            params.tags = tags;
+        if (tags && (Array.isArray(tags) ? tags.length > 0 : true)) {
+            params.tags = Array.isArray(tags) ? tags.join(',') : tags;
         }
         try {
-            
+
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/GetProjects/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -26,7 +26,7 @@ export class GetUserProjects {
 
             return response;
         }
-        catch(e) {
+        catch (e) {
             console.error("Erro ao tentar metodo get projects: ", e);
             return null;
         }
