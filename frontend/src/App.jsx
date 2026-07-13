@@ -5,7 +5,7 @@ import Register from './page/register/Register'
 import Dashboard from './page/dashboard/Dashboard'
 import Profile from './page/profile/Profile'
 import EditProfile from './page/profile/EditProfile'
-import Discover from './page/discover/Discover'
+// import Discover from './page/discover/Discover'
 import CreateProject from './page/createProject/CreateProject'
 import PainelDono from './page/painelDono/PainelDono'
 import ProjectDetails from './page/projectDetails/ProjectDetails'
@@ -25,7 +25,7 @@ function App() {
       <Route path="/createProject" element={<CreateProject />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/edit" element={<EditProfile />} />
-      <Route path="/discover" element={<Discover />} />
+      {/* <Route path="/discover" element={<Discover />} /> */}
       <Route path="/projeto/:id" element={<ProjectDetails />} />
       <Route path="/painelDono/:projetoId" element={<PainelDono />} />
     </Routes>

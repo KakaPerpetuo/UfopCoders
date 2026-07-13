@@ -52,7 +52,7 @@ export default function Login() {
 
                 login(response.data.access);
 
-                navigate('/discover');
+                navigate('/dashboard');
 
             } catch (e) {
                 console.log("Erro na autenticação: ", e);
