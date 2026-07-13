@@ -6,7 +6,7 @@ export class FetchDiscoverProjects {
         if (search) {
             params.search = search;
         }
-        if (tags) {
+        if (tags && (Array.isArray(tags) ? tags.length > 0 : true)) {
             params.tags = Array.isArray(tags) ? tags.join(',') : tags;
         }
         try {
