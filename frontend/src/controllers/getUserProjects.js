@@ -13,7 +13,7 @@ export class GetUserProjects {
             params.search = search;
         }
         if(tags) {
-            params.tags = tags;
+            params.tags = Array.isArray(tags) ? tags.join(',') : tags;
         }
         try {
             

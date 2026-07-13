@@ -7,7 +7,7 @@ export class FetchDiscoverProjects {
             params.search = search;
         }
         if (tags) {
-            params.tags = tags;
+            params.tags = Array.isArray(tags) ? tags.join(',') : tags;
         }
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/projects/`, {

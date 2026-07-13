@@ -95,7 +95,11 @@ class GetProjects(generics.ListAPIView):
 
         # Obtém os parâmetros da URL
         search = self.request.query_params.get("search")
-        tag = self.request.query_params.get("tags")
+        tags_param = self.request.query_params.getlist("tags")
+        if not tags_param:
+            tags_str = self.request.query_params.get("tags")
+            if tags_str:
+                tags_param = [t.strip() for t in tags_str.split(",") if t.strip()]
 
         # Filtra por título ou descrição
         if search:
@@ -105,8 +109,8 @@ class GetProjects(generics.ListAPIView):
             )
 
         # Filtra por tag
-        if tag:
-            queryset = queryset.filter(tags__id=tag)
+        if tags_param:
+            queryset = queryset.filter(tags__id__in=tags_param)
 
         # Evita projetos repetidos quando houver JOIN com tags
         return queryset.distinct()
@@ -124,7 +128,11 @@ class DiscoverProjectsView(generics.ListAPIView):
         queryset = Project.objects.all()
         # Obtém os parâmetros da URL
         search = self.request.query_params.get("search")
-        tag = self.request.query_params.get("tags")
+        tags_param = self.request.query_params.getlist("tags")
+        if not tags_param:
+            tags_str = self.request.query_params.get("tags")
+            if tags_str:
+                tags_param = [t.strip() for t in tags_str.split(",") if t.strip()]
 
         # Filtra por título ou descrição
         if search:
@@ -134,8 +142,8 @@ class DiscoverProjectsView(generics.ListAPIView):
             )
 
         # Filtra por tag
-        if tag:
-            queryset = queryset.filter(tags__id=tag)
+        if tags_param:
+            queryset = queryset.filter(tags__id__in=tags_param)
 
         # Obtém os IDs de tags do usuário logado
         user_tag_ids = self.request.user.tags.values_list('id', flat=True)
