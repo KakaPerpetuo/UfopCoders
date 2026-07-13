@@ -40,11 +40,11 @@ export default function Dashboard() {
                 <main className='flex-1 flex p-8 '>
                     <h1 className='text-white'>Explore Projetos</h1>
 
-                    <button 
+                    <button
                         className='w-[150px] h-[40px] flex items-center justify-center gap-2 hover:-translate-y-1 transition-transform shadow-md bg-[#8b5cf6] text-white ml-auto rounded-md'
                         onClick={() => navigate('/createProject')}
                     >
-                        <FaPlus/>
+                        <FaPlus />
                         Criar Projeto
                     </button>
                 </main>
