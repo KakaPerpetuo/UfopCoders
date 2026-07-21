@@ -72,7 +72,7 @@ export default function CreateProject() {
                         
                         <button
                             className='text-gray-200 mt-3 gap-2 hover:-translate-y-1 transition-transform flex items-center justify-center'
-                            onClick={() => navigate('/dashboard')}        
+                            onClick={() => navigate('/discover')}        
                         >
                             <FaArrowLeft/>
                             Voltar a Projetos
