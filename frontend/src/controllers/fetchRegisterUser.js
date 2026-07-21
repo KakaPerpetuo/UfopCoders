@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 
 export class FetchRegisterUser {
     async execute(name, email, password, bio, cargo) {
@@ -10,7 +10,7 @@ export class FetchRegisterUser {
             cargo: cargo || '',
         };
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/CreateUser/`, userData);
+            const response = await api.post(`/api/CreateUser/`, userData);
             return response;
         } catch (e) {
             console.error(e);

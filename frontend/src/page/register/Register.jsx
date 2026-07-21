@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Briefcase, FileText, Camera } from "lucide-react";
 import { FetchRegisterUser } from "../../controllers/fetchRegisterUser";
 import axios from "axios";
+import api from "../../controllers/api";
 
 const fetchRegisterUser = new FetchRegisterUser();
 
@@ -83,7 +84,7 @@ export default function Register() {
                 // Passo 2: se tiver foto, faz login automático e sobe a foto
                 if (profilePhoto) {
                     // Faz login para pegar o token
-                    const loginRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/PostLogin/`, {
+                    const loginRes = await api.post(`/api/PostLogin/`, {
                         email,
                         password
                     });
@@ -100,7 +101,7 @@ export default function Register() {
                     });
                 }
 
-                setTimeout(() => navigate('/login'), 2000);
+                navigate('/login');
 
             } catch (e) {
                 console.log("Erro no registro: ", e);

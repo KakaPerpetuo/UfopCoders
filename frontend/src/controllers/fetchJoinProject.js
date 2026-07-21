@@ -1,11 +1,10 @@
-import axios from "axios";
+import api from "./api";
 
 export class JoinProject {
-  async execute(token, projetoId){
+  async execute(projetoId){
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/projects/${projetoId}/join/`,
+        const response = await api.post(`/api/projects/${projetoId}/join/`,
              {}, // body vazio, backend pega o user direto do token
-             { headers: { Authorization: `Bearer ${token}` } }
         )
         return response.data 
     } catch (e){

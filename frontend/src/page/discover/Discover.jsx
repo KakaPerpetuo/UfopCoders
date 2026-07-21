@@ -34,9 +34,9 @@ export default function Discover() {
     useEffect(() => {
         async function loadData() {
             const [userRes, userProjectsRes, tagsRes] = await Promise.all([
-                fetchUserMe.execute(token),
-                fetchUserProjects.execute(token),
-                fetchTags.execute(token)
+                fetchUserMe.execute(),
+                fetchUserProjects.execute(),
+                fetchTags.execute()
             ])
 
             if (userRes) setUser(userRes.data)
@@ -52,7 +52,7 @@ export default function Discover() {
         if (!token) return
 
         const delayDebounceFn = setTimeout(async () => {
-            const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTags, page)
+            const response = await fetchDiscoverProjects.execute(searchTerm, selectedTags)
             if (response) {
                 if (response.data.results) {
                     setDiscoverProjects(response.data.results)
@@ -80,7 +80,7 @@ export default function Discover() {
         if (e) e.preventDefault()
         setPage(1)
 
-        const response = await fetchDiscoverProjects.execute(token, searchTerm, selectedTags, 1)
+        const response = await fetchDiscoverProjects.execute(searchTerm, selectedTags)
         if (response) {
             if (response.data.results) {
                 setDiscoverProjects(response.data.results)

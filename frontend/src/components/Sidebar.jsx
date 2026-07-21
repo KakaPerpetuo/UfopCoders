@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom'
+
 export default function Sidebar({ user, projects }) {
+    const navigate = useNavigate()
     return (
         <aside className="bg-sidebar border border-sidebar-border rounded-[var(--radius)] p-5 w-80 flex flex-col gap-4">
 
@@ -34,7 +37,11 @@ export default function Sidebar({ user, projects }) {
                 <h4 className="text-muted-foreground uppercase tracking-wide mb-2">Meus Projetos</h4>
                 <div className="flex flex-col gap-1.5">
                     {projects?.map(project => (
-                        <div key={project.id} className="bg-secondary border border-border rounded-[var(--radius)] px-3 py-2">
+                        <div 
+                            key={project.id} 
+                            onClick={() => navigate(`/painelDono/${project.id}`)}
+                            className="bg-secondary border border-border rounded-[var(--radius)] px-3 py-2 cursor-pointer hover:bg-secondary/80 transition-colors"
+                        >
                             <p className="text-sm text-secondary-foreground">{project.titulo}</p>
                             <span className="text-xs text-muted-foreground">{project.numero_membros} membros</span>
                         </div>

@@ -16,12 +16,12 @@ export default function Profile() {
 
     useEffect(() => {
         async function loadProfileAndProjects() {
-            const userRes = await fetchUserMe.execute(token);
+            const userRes = await fetchUserMe.execute();
             if (userRes) {
                 setUser(userRes.data);
             }
 
-            const projectsRes = await fetchUserProjects.execute(token);
+            const projectsRes = await fetchUserProjects.execute();
             if (projectsRes && projectsRes.data) {
                 setProjects(projectsRes.data);
             }

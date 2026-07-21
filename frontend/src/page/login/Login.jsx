@@ -50,7 +50,7 @@ export default function Login() {
 
                 console.log("Sucesso na autenticação. Resposta: ", response);
 
-                login(response.data.access);
+                await login(response.data);
 
                 navigate('/discover');
 

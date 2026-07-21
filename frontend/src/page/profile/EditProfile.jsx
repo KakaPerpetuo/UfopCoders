@@ -33,7 +33,7 @@ export default function Profile() {
     useEffect(() => {
         async function load() {
             const [resUser, resTags] = await Promise.all([
-                fetchUserMe.execute(token),
+                fetchUserMe.execute(),
                 fetchTags.execute(),
             ])
             if (resUser) {
@@ -60,7 +60,7 @@ export default function Profile() {
 
     async function handleSalvar() {
         if (fotoArquivo) {
-            await fetchUploadFoto.execute(token, fotoArquivo)
+            await fetchUploadFoto.execute(fotoArquivo)
         }
         const data = {
             nome,
@@ -68,7 +68,7 @@ export default function Profile() {
             cargo,
             tags_input: tagsSelecionadas.map(n => ({ nome: n })),
         }
-        const res = await fetchPatchUserMe.execute(token, data)
+        const res = await fetchPatchUserMe.execute(data)
         if (res) {
             setMensagem('Perfil atualizado com sucesso!')
             setTimeout(() => navigate('/profile'), 1500)

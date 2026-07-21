@@ -19,8 +19,8 @@ export default function Dashboard() {
     useEffect(() => {
         async function loadData() {
             const [userRes, projectsRes] = await Promise.all([
-                fetchUserMe.execute(token),
-                fetchUserProjects.execute(token)
+                fetchUserMe.execute(),
+                fetchUserProjects.execute()
             ])
             if (userRes) setUser(userRes.data)
             if (projectsRes) setProjects(projectsRes.data)
