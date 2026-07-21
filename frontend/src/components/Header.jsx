@@ -17,7 +17,7 @@ export default function Header() {
                 
                 <div 
                     className="flex items-center gap-2 cursor-pointer" 
-                    onClick={() => navigate(token ? '/dashboard' : '/')}
+                    onClick={() => navigate(token ? '/discover' : '/')}
                 >
                     <div className="relative w-10 h-10">
                         <svg viewBox="0 0 40 40" className="w-full h-full">
